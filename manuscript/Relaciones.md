@@ -61,3 +61,30 @@ A partir de esa instancia utilizamos el método de la relación `$alumno->materi
 	+ No elimina relaciones existente, solo agregaría las nuevas, pero también impide duplicar una relación: `$alumno->materias()->syncWithoutDetaching([$id_materia_x, $id_materia_y]);`
 
 Los méteodos *attach*, *detach* y *sync* actualizan la información en la tabla pivote `alumno_materia`.
+
+
+#### Recuperar columnas adicionales de la tabla pivote
+
+Si se han agregado columnas con información adicional en la tabla pivote debemos:
+
+1. Definirlas en la relación.
+2. Utilizar `pivot` para acceder a dichas columnas.
+
+Siguiendo el ejemplo, agregamos la *calificación* como información adicional en la relación *Materia* con *Alumno* por lo que agregamos en la relación el método `withPiovot()`:
+
+```php
+public function alumnos()
+{
+    return $this->belongsToMany(Alumno::class)->withPivot('calificacion');
+}
+```
+
+Para recuperar la información de la columna *calificacion* utilizaremos `pivot`:
+
+```php
+$materia = App\Materia::find(1);
+
+foreach ($materia->alumnos as $alumno) {
+    echo $alumno->pivot->calificacion;
+}
+```
